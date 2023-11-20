@@ -5,7 +5,7 @@ import { NavLink, Routes, Route } from "react-router-dom";
 import BooksList from "./admin/Book/controller/BooksList";
 import AuthorsList from "./admin/Book/author/AuthorsList";
 import PublishersList from "./admin/Book/publisher/PublishersList";
-import CategoriesList from "./admin/Book/categories/CategoriesList";
+import CategoriesList from "./admin/Book/category/CategoriesList";
 
 const Menu = () => {
   const [selectedItem, setSelectedItem] = useState("books"); // Mục được chọn mặc định là 'books'

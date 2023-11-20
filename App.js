@@ -27,9 +27,9 @@ import AddPublisher from "./components/admin/Book/publisher/AddPublisher.jsx";
 
 import UpdatePublisher from "./components/admin/Book/publisher/UpdatePublisher.jsx";
 import PublishersList from "./components/admin/Book/publisher/PublishersList.jsx";
-import AddCategory from "./components/admin/Book/categories/AddCategory.jsx";
-import CategoriesList from "./components/admin/Book/categories/CategoriesList.jsx";
-import UpdateCategory from "./components/admin/Book/categories/UpdateCategory.jsx";
+import AddCategory from "./components/admin/Book/category/AddCategory.jsx";
+import CategoriesList from "./components/admin/Book/category/CategoriesList.jsx";
+import UpdateCategory from "./components/admin/Book/category/UpdateCategory.jsx";
 import UpdateAuthor from "./components/admin/Book/author/UpdateAuthor.jsx";
 import AddAuthor from "./components/admin/Book/author/AddAuthor.jsx";
 import AuthorsList from "./components/admin/Book/author/AuthorsList.jsx";
