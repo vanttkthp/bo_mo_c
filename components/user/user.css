@@ -1,0 +1,15 @@
+.bill-container {
+    max-width: 400px; /* Điều chỉnh kích thước tối đa của bill */
+    border: 1px solid #000; /* Thêm đường viền đen xung quanh bill */
+    padding: 20px; /* Khoảng cách giữa nội dung và đường viền */
+  }
+  
+  .bill-table {
+    width: 100%; /* Đảm bảo bảng điền vào chiều rộng của bill */
+  }
+  
+  .bill-table th,
+  .bill-table td {
+    border: 1px solid #000; /* Thêm đường viền cho ô bảng */
+    padding: 5px; /* Khoảng cách bên trong ô bảng */
+  }
