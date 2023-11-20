@@ -62,7 +62,7 @@ function Header() {
                 ) : null}
               </div> */}
               <div className="dropdown">
-                <Link to="" className="nav-link" onClick={handleDropdownToggle}>
+                <Link className="nav-link" onClick={handleDropdownToggle}>
                   Product
                 </Link>
 

@@ -20,8 +20,7 @@ import AccessDenied from "./components/Pages/AccessDenied.jsx";
 import Order from "./components/user/Order.jsx";
 import Profile from "./components/user/Profile.jsx";
 import Bills from "./components/user/Bills.jsx";
-import AddressSelector from "./components/user/AddressSelector.jsx";
-import Menu from "./components/Menu.jsx";
+
 import MobilesController from "./components/admin/Mobile/MobilesManagement.jsx";
 import ClothesController from "./components/admin/Clothes/ClothesController.jsx";
 import AddPublisher from "./components/admin/Book/publisher/AddPublisher.jsx";
@@ -36,7 +35,7 @@ import AddAuthor from "./components/admin/Book/author/AddAuthor.jsx";
 import AuthorsList from "./components/admin/Book/author/AuthorsList.jsx";
 import BooksList from "./components/admin/Book/controller/BooksList.jsx";
 import UpdateBook from "./components/admin/Book/controller/UpdateBook.jsx";
-import Navbar from "./components/Layout/NavBar.jsx";
+
 
 function App() {
   const AdminRoutes = () => {

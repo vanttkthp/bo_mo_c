@@ -5,8 +5,7 @@ import { initializeApp } from "firebase/app";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function UpdateBook() {
-  const [isError, setIsError] = useState(false);
-  const [isDuplicate, setIsDuplicate] = useState(false);
+
   const { id: bookId } = useParams();
   const [book, setBook] = useState({
     id: bookId,
@@ -49,7 +48,7 @@ function UpdateBook() {
 
   const [selectedImage, setSelectedImage] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(book.image);
-  const [error, setError] = useState(null);
+
 
   const handleInputChange = (e) => {
     if (e.target.name === "image") {
@@ -65,11 +64,6 @@ function UpdateBook() {
 
   const handleSave = async (event) => {
     event.preventDefault();
-    if (!book.title || !book.authorId) {
-      setIsDuplicate(false);
-      setIsError(true);
-      return;
-    }
     try {
       let downloadURL = book.image; // Giữ nguyên giá trị ban đầu nếu không có ảnh mới được chọn
       if (selectedImage) {
@@ -87,9 +81,22 @@ function UpdateBook() {
 
       navigate("/books");
     } catch (error) {
-      setError("The book already exists in the database!");
+      if (error.response && error.response.data) {
+        showMessage(error.response.data);
+      } else {
+        showMessage("Error adding author.");
+      }
+      console.error("Error adding author:", error);
     }
   };
+  const [message, setMessage] = useState("");
+  const showMessage = (msg) => {
+    setMessage(msg);
+    // setTimeout(() => {
+    //   setMessage("");
+    // }, 2000); // Hiển thị trong 3 giây
+  };
+
 
   const previewImage = (file) => {
     const reader = new FileReader();
@@ -114,12 +121,7 @@ function UpdateBook() {
         <div className="row">
           <div className="col-md-6">
             <h2>Book Information</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
-            {isError && (
-              <p className="text-danger">
-                Please fill in all required(*) fields.
-              </p>
-            )}
+            {message && <p className="text-danger">{message}</p>}
             <div className="form-row">
               <div className="form-group col-md-6">
                 <label htmlFor="title" className="form-label">

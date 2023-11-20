@@ -8,8 +8,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 function AddBook() {
   let navigate = useNavigate();
-  const [isDuplicate, setIsDuplicate] = useState(false);
-  const [isError, setIsError] = useState(false);
+
   const [book, setBook] = useState({
     title: "",
     authorId: "",
@@ -44,17 +43,6 @@ function AddBook() {
     const storage = getStorage(app);
   }, []);
 
-  const {
-    title,
-    authorId,
-    publisherId,
-    description,
-    publishYear,
-    numberOfPages,
-    language,
-    image,
-    price,
-  } = book;
   const onInputChange = (e) => {
     if (e.target.name === "image") {
       const file = e.target.files[0];
@@ -67,11 +55,6 @@ function AddBook() {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!title || !publishYear || !publisherId) {
-      setIsDuplicate(false);
-      setIsError(true);
-      return;
-    }
 
     try {
       if (selectedImage) {
@@ -84,7 +67,7 @@ function AddBook() {
         };
 
         await axios.post("http://localhost:8080/books/add", bookData);
-        setIsDuplicate(false);
+
         navigate("/books");
       } else {
         const bookData = {
@@ -93,12 +76,16 @@ function AddBook() {
         };
 
         await axios.post("http://localhost:8080/books/add", bookData);
-        setIsDuplicate(false);
+
         navigate("/books");
       }
     } catch (error) {
-      setIsDuplicate(true);
-      console.error(error);
+      if (error.response && error.response.data) {
+        showMessage(error.response.data);
+      } else {
+        showMessage("Error adding author.");
+      }
+      console.error("Error adding author:", error);
     }
   };
 
@@ -117,6 +104,14 @@ function AddBook() {
       event.preventDefault();
     }
   };
+  const [message, setMessage] = useState("");
+  const showMessage = (msg) => {
+    setMessage(msg);
+    // setTimeout(() => {
+    //   setMessage("");
+    // }, 2000); // Hiển thị trong 3 giây
+  };
+
   return (
     <form onSubmit={(e) => onSubmit(e)} id="book-form" className="mb-3">
       <div
@@ -126,16 +121,7 @@ function AddBook() {
         <div className="row">
           <div className="col-md-6">
             <h2>Book Information</h2>
-            {isDuplicate && (
-              <p className="text-danger">
-                The book already exists in the database!
-              </p>
-            )}
-            {isError && (
-              <p className="text-danger">
-                Please fill in all required(*) fields.
-              </p>
-            )}
+            {message && <p className="text-danger">{message}</p>}
             <div className="form-row">
               <div className="form-group col-md-6">
                 <label htmlFor="Title" className="form-label">
@@ -148,6 +134,7 @@ function AddBook() {
                   name="title"
                   value={book.title}
                   onChange={(e) => onInputChange(e)}
+                  required
                 />
               </div>
               <div className="form-group col-md-6">
@@ -161,6 +148,7 @@ function AddBook() {
                   value={book.authorId}
                   onChange={(e) => onInputChange(e)}
                   min={1}
+                  required
                 />
               </div>
             </div>
@@ -177,6 +165,7 @@ function AddBook() {
                   value={book.publisherId}
                   onChange={(e) => onInputChange(e)}
                   min={1}
+                  required
                 />
               </div>
               <div className="form-group col-md-6">
@@ -203,11 +192,10 @@ function AddBook() {
                 name="language"
                 value={book.language}
                 onChange={(e) => onInputChange(e)}
-
               />
             </div>
             <div className="form-row">
-            <div className="form-group col-md-6">
+              <div className="form-group col-md-6">
                 <label htmlFor="book-numerOfPages">Pages*</label>
                 <input
                   type="number"
@@ -235,8 +223,6 @@ function AddBook() {
               </div>
             </div>
 
-        
-
             <div className="form-group">
               <label htmlFor="book-description">Description</label>
               <textarea
@@ -257,7 +243,6 @@ function AddBook() {
                   type="file"
                   id="book-image"
                   name="image"
-                  
                   onChange={(e) => {
                     const file = e.target.files[0];
                     onInputChange(e);
@@ -267,22 +252,25 @@ function AddBook() {
                 />
               </div>
               <div className="form-group text-center">
-                <img id="preview" src={previewUrl}  className="rounded border mt-2" alt="Preview" />
+                <img
+                  id="preview"
+                  src={previewUrl}
+                  className="rounded border mt-2"
+                  alt="Preview"
+                />
               </div>
             </div>
           </div>
         </div>
         <hr></hr>
         <button
-            type="submit"
-            className="btn btn-outline-dark mb-3"
-            form="book-form"
-          >
-            Add
-          </button>
+          type="submit"
+          className="btn btn-outline-dark mb-3"
+          form="book-form"
+        >
+          Add
+        </button>
       </div>
-      
-      
     </form>
   );
 }
