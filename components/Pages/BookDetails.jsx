@@ -3,9 +3,9 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FaStar } from "react-icons/fa";
 
-function BookDetails () {
+function BookDetails() {
   const userEmail = localStorage.getItem("userEmail");
-  const userName = localStorage.getItem("userName")
+  const userName = localStorage.getItem("userName");
   const { id } = useParams();
   const [reviewError, setReviewError] = useState("");
   const [orderSuccess, setOrderSuccess] = useState(false);
@@ -68,36 +68,38 @@ function BookDetails () {
   }
 
   const [review, setReview] = useState({
-    reviewer: userName,
-    rating: "",
-    text: "",
-    book: id,
+    id: "",
+    mobileId: "",
+    clothesId: "",
+    bookId: id,
+    createdDate: "",
+    ratingScore: "",
   });
   function submitReview() {
     if (!review.text) {
       setReviewError("Please enter a review");
       return;
     }
-    if (rating === 0) {
+    if (review.ratingScore === 0) {
       setRatingError("Please select a rating");
       return;
     }
-  
+
     const reviewData = {
       ...review,
       reviewer: userName,
-      rating: rating,
+      ratingScore: rating,
     };
-  
+
     axios
-      .post("http://localhost:8080/review", reviewData)
+      .post("http://localhost:8080/rating/add", reviewData)
       .then((response) => {
         const newReview = response.data;
         setReviews((prevReviews) => [...prevReviews, newReview]);
         setRating(0);
         setReview((prevReview) => ({
           ...prevReview,
-          rating: 0,
+          ratingScore: 0,
           text: "",
         }));
         setReviewError("");
@@ -111,13 +113,24 @@ function BookDetails () {
   }, [review]);
 
   const loadBook = async () => {
-    const result = await axios.get(`http://localhost:8080/book/${id}`);
+    const result = await axios.get(
+      `http://localhost:8080/books/getById?id=${id}`
+    );
     setBook(result.data);
   };
   const [reviews, setReviews] = useState([]);
   const loadReviews = async () => {
-    const result = await axios.get(`http://localhost:8080/reviews/book/${id}`);
-    setReviews(result.data);
+    try {
+      const result = await axios.get(
+        `http://localhost:8080/rating/getById?id=${id}`
+      );
+      const reviewsArray = Array.isArray(result.data)
+        ? result.data
+        : [result.data];
+      setReviews(reviewsArray);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   function updateReview(value) {
@@ -127,7 +140,7 @@ function BookDetails () {
 
   const handleStarClick = (value) => {
     setRating(value);
-    setRatingError(""); 
+    setRatingError("");
   };
 
   const handleStarHover = (value) => {
@@ -162,7 +175,7 @@ function BookDetails () {
     }
   };
   function submitReviewOnEnter(event) {
-    if (event.charCode === 13 && !event.shiftKey)  {
+    if (event.charCode === 13 && !event.shiftKey) {
       event.preventDefault();
       submitReview();
     }
@@ -181,11 +194,7 @@ function BookDetails () {
         <div className="container mt-4">
           <div className="row mb-4">
             <div className="col-md-4 text-center">
-              <img
-                src={book.bookCover}
-                alt={book.title}
-                className="img-fluid"
-              />
+              <img src={book.image} alt={book.title} className="img-fluid" />
             </div>
             <div className="col-md-8">
               <h2>{book.title}</h2>
@@ -196,7 +205,6 @@ function BookDetails () {
               </p>
               {localStorage.getItem("isUser") ? (
                 <>
-                  <p>Order:</p>
                   <div className="d-flex align-items-center">
                     <input
                       type="number"
@@ -232,7 +240,7 @@ function BookDetails () {
                 Let everyone know your review :
               </label>
               <form></form>
-              
+
               <div className="rating mb-3">{renderStars()}</div>
               <textarea
                 className="form-control"
@@ -262,16 +270,13 @@ function BookDetails () {
         <h4>Comments</h4>
         {reviews.map((review) => (
           <div key={review.id}>
-            
             <div>
-            <p className="h5">
-              {review.reviewer}
-            </p>
-              {[...Array(review.rating)].map((_, index) => (
+              <p className="h5">{review.reviewer}</p>
+              {[...Array(review.ratingScore)].map((_, index) => (
                 <FaStar key={index} color="gold" />
               ))}
             </div>
-            <p>{review.text}</p>
+            {/* <p>{review.text}</p> */}
             <hr />
           </div>
         ))}
@@ -291,7 +296,6 @@ function BookDetails () {
       </style>
     </div>
   );
-};
-
+}
 
 export default BookDetails;

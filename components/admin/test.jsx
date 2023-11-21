@@ -1,66 +1,64 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+
 import axios from "axios";
 import { Link } from "react-router-dom";
+import "./fitsize.css";
 import { FaSearch } from "react-icons/fa";
-import moment from 'moment';
-import Menu from "../../../Menu";
-function BooksList () {
+
+
+function BookShopList () {
   const [books, setBooks] = useState([]);
-  const [confirmAddBook, setConfirmAddBook] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
   const [initialBooks, setInitialBooks] = useState([]);
-
+  const [searchQuery, setSearchQuery] = useState("");
   useEffect(() => {
-    loadBooks();
+    axios
+      .get("http://localhost:8080/books/search?keyword=Book&page=0&size=2&sortString=id")
+      .then((res) => {
+        setBooks(res.data);
+        setInitialBooks(res.data); 
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
-
-  const loadBooks = async () => {
-    const result = await axios.get("http://localhost:8080/books");
-    setBooks(result.data);
-    setInitialBooks(result.data);
-  };
-  const deleteBooks = async (id) => {
-    await axios.delete(`http://localhost:8080/book/${id}`);
-    loadBooks();
-  };
-  const handleDeleteClick = (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this book?"
-    );
-    if (confirmDelete) {
-      deleteBooks(id);
-    }
-  };
-  const handleAddBookClick = () => {
-    const confirmAdd = window.confirm(
-      "Are you sure you want to add a new book?"
-    );
-    if (confirmAdd) {
-      setConfirmAddBook(true);
-    }
-  };
-  if (confirmAddBook) {
-    window.location.href = "/admin/book-detail";
-  }
-
   const clearSearch = () => {
-    setSearchQuery("");
+    setSearchQuery(""); 
     setBooks(initialBooks);
   };
 
+  const bookList = books.map((book) => (
+    <div className="col-md-3 mb-3 card-deck hover-zoom" key={book.id}>
+      <Link
+        to={`/book/${book.id}`}
+        className="card d-flex flex-column align-items-center bg-white custom-link border-0 text-decoration-none text-dark"
+      >
+        <img
+          src={book.image}
+          alt={book.title}
+          className="rounded border mt-2"
+        />
+        <div className="card-body text-center">
+          <h5 className="card-title">{book.title}</h5>
+          <h6 className="card-title">{book.authorName}</h6>
+          <h7 className="card-text position-absolute bottom-0 start-50 translate-middle-x">
+            {book.price} $
+          </h7>
+        </div>
+      </Link>
+    </div>
+  ));
+  
   const handleSearchChange = (event) => {
-    const query = event.target.value;
-    setSearchQuery(query);
-    if (query === "") {
+    setSearchQuery(event.target.value);
+    if (event.target.value === "") {
       clearSearch();
-    } else {
-      searchBooks(query);
     }
   };
+  const handleSearchSubmit = (event) => {
+    event.preventDefault();
 
-  const searchBooks = (query) => {
     axios
-      .get(`http://localhost:8080/books/search?query=${query}`)
+      .get(`http://localhost:8080/books/search?query=${searchQuery}`)
       .then((res) => {
         setBooks(res.data);
       })
@@ -70,106 +68,30 @@ function BooksList () {
   };
 
   return (
-    
     <div
-      className="container card shadow border mb-5"
-      style={{ backgroundColor: "#white" }}
+      className="card bg-white shadow border mb-4 container"
+      style={{ backgroundColor: "#f2f2f2" }}
     >
-   
-      <div className="container">
-        <div className="py-4">
-          {/* <h2 className="text-center">PRODUCT Information</h2> */}
-          <div className="row">
-            <div className="col-md-6 mb-3">
-              <input
-                type="text"
-                className="form-control mr-2 custom-input"
-                style={{ width: "630px", outlineColor: "pink" }}
-                placeholder="Search..."
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
-            <div className="col-md-6 mb-3">
-              {localStorage.getItem("isAdmin") ? (
-                <div>
-                  <button
-                    className="btn btn-outline-dark btn-white btn-block"
-                    onClick={handleAddBookClick}
-                  >
-                    ADD NEW PRODUCT
-                  </button>
-                </div>
-              ) : null}
-            </div>
-          </div>
-          <table className="table  ">
-            <thead>
-              <tr>
-                <th scope="col">ID</th>
-                <th scope="col">Title</th>
-                <th scope="col">Author</th>
-                <th scope="col">Category</th>
-                <th scope="col">Published Date</th>
-                <th scope="col">Pages</th>
-                <th scope="col">Price</th>
-                <th scope="col">Sold Quantity</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {books.map((item, index) => (
-                <tr key={index}>
-                  <th scope="row">{index + 1}</th>
-                  <td>
-                    <a
-                      href={`/book/${item.id}`}
-                      style={{ textDecoration: "none", color: "black" }}
-                    >
-                      {item.title}
-                    </a>
-                  </td>
-                  <td>{item.author}</td>
-                  <td>{item.category}</td>
-                  <td>{moment(item.publishedDate).format("DD-MM-YYYY")}</td>
-                  <td>{item.pages}</td>
-                  <td>{item.bookPrice}</td>
-                  <td>{item.soldQuantity}</td>
-                  <td>
-                    <div>
-                      {localStorage.getItem("isAdmin") ? (
-                        <div>
-                          <Link
-                            className="btn btn-outline-dark mx-2"
-                            to={`/admin/book-detail/${item.id}`}
-                          >
-                            View
-                          </Link>
-                          <button
-                            className="btn btn-outline-danger mx-2 "
-                            onClick={() => handleDeleteClick(item.id)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      ) : null}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {/* <Link
-            to="/book-detail"
-            className="btn btn-outline-primary shadow btn-white btn-block"
-            
-          >
-            ADD NEW BOOK
-          </Link> */}
-        </div>
+      <h1 className="my-5 text-center">Online Market</h1>
+      <div className="mb-3 d-flex justify-content-center align-items-center">
+        <form onSubmit={handleSearchSubmit} className="d-flex">
+          <input
+            type="text"
+            className="form-control rounded-pill mr-2 custom-input"
+            style={{ width: "500px", outlineColor: "pink" }}
+            placeholder="Search..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+          />
+          <button type="submit" className="btn btn-outline-dark rounded-pill">
+            <FaSearch />
+          </button>
+        </form>
       </div>
+      <hr />
+      <div className="row justify-content-center">{bookList}</div>
     </div>
   );
-}
+};
+export default BookShopList;
 
-export default BooksList;

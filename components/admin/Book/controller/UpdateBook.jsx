@@ -152,23 +152,23 @@ function UpdateBook() {
 
             <div className="form-row">
               <div className="form-group col-md-6">
-                <label htmlFor="book-publisherId">Publisher Id*</label>
+                <label htmlFor="publisherId">Publisher Id*</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="book-publisherId"
+                  id="publisherId"
                   name="publisherId"
                   value={book.publisherId}
                   onChange={handleInputChange}
                 />
               </div>
               <div className="form-group col-md-6">
-                <label htmlFor="book-publishYear">Publisher Year*</label>
+                <label htmlFor="publishYear">Publisher Year*</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="book-publishYear"
-                  name="publisherYear"
+                  id="publishYear"
+                  name="publishYear"
                   value={book.publishYear}
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}

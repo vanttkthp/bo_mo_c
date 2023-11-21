@@ -18,11 +18,9 @@ import BookDetails from "./components/Pages/BookDetails.jsx";
 import Cart from "./components/user/Cart.jsx";
 import AccessDenied from "./components/Pages/AccessDenied.jsx";
 import Order from "./components/user/Order.jsx";
-import Profile from "./components/user/Profile.jsx";
+import Profile from "./components/user/Profile/Profile.jsx";
 import Bills from "./components/user/Bills.jsx";
 
-import MobilesController from "./components/admin/Mobile/MobilesManagement.jsx";
-import ClothesController from "./components/admin/Clothes/ClothesController.jsx";
 import AddPublisher from "./components/admin/Book/publisher/AddPublisher.jsx";
 
 import UpdatePublisher from "./components/admin/Book/publisher/UpdatePublisher.jsx";
@@ -71,14 +69,7 @@ function App() {
             <>
               <Route path="/admin/*" element={<AdminRoutes />} />
 
-              <Route
-                path="/mobilescontroller"
-                element={<MobilesController />}
-              />
-              <Route
-                path="/clothescontroller"
-                element={<ClothesController />}
-              />
+             
             </>
           ) : null}
           {localStorage.getItem("isUser") ? (

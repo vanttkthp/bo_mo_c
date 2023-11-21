@@ -169,11 +169,11 @@ function AddBook() {
                 />
               </div>
               <div className="form-group col-md-6">
-                <label htmlFor="book-release-date">Publish Year*</label>
+                <label htmlFor="publishYear">Publish Year*</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="book-release-date"
+                  id="publishYear"
                   name="publishYear"
                   value={book.publishYear}
                   onChange={(e) => onInputChange(e)}
