@@ -36,3 +36,6 @@
     transform: rotate(360deg);
   }
 }
+* {
+  background-color: #f2f2f2; /* Đặt màu xám cho background */
+}

@@ -8,6 +8,7 @@ function AuthorsList() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalAuthors, setTotalAuthors] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +20,7 @@ function AuthorsList() {
         if (response.data && Array.isArray(response.data.listAuthors)) {
           setAuthors(response.data.listAuthors);
           setTotalPages(response.data.totalPages);
+          setTotalAuthors(response.data.totalItems);
         } else {
           console.error("Invalid data format received.");
         }
@@ -58,7 +60,7 @@ function AuthorsList() {
     >
       <div className="container">
         <div className="py-4">
-          <h2 className="text-center">Author Information</h2>
+          <h2 className="text-center">{totalAuthors} Authors</h2>
           <div className="row">
             <div className="col-md-6 mb-3">
               <input

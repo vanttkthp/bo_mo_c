@@ -1,36 +1,38 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-function AddBrand() {
-  const [brand, setBrand] = useState({
+function UpdateBrand() {
+  const { id: brandId } = useParams();
+  const [brandData, setBrandData] = useState({
+    id: brandId,
     name: "",
     headquarter: "",
   });
+
+  const { id, name, headquarter } = brandData;
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  const { name, headquarter } = brand;
-  const [message, setMessage] = useState("");
-
   const handleChange = (e) => {
-    setBrand({ ...brand, [e.target.name]: e.target.value });
+    setBrandData({ ...brandData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/brand/add", brand);
-      showMessage("Brand added successfully!");
-      setBrand({ name: "", headquarter: "" });
+      await axios.post("http://localhost:8080/brand/update", brandData);
+
+      setBrandData({ id: "", name: "", headquarter: "" });
       navigate("/brand/list");
     } catch (error) {
       if (error.response && error.response.data) {
         showMessage(error.response.data);
       } else {
-        showMessage("Error adding brand.");
+        showMessage("Error updating brand.");
       }
-      console.error("Error adding brand:", error);
+      console.error("Error updating brand:", error);
     }
   };
 
@@ -41,13 +43,45 @@ function AddBrand() {
     }, 2000); // Hiển thị trong 3 giây
   };
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/brand/getById?id=${brandId}`
+        );
+        if (response.data) {
+          const { name, headquarter } = response.data;
+          setBrandData({ ...brandData, name, headquarter });
+        } else {
+          console.error("No brand data found");
+        }
+      } catch (error) {
+        console.error("Error fetching brand data:", error);
+      }
+    };
+    fetchData();
+  }, [brandId]);
+
   return (
     <div className="container">
       <div className="row justify-content-center align-items-center">
         <div className="col-md-4">
           <form onSubmit={handleSubmit} className="card p-4">
-            <h2 className="text-center mb-4">Add Brand</h2>
-
+            <h2 className="text-center mb-4">Update Brand</h2>
+            <div className="form-group">
+              <label htmlFor="id">ID:</label>
+              <input
+                type="text"
+                className="form-control"
+                id="id"
+                name="id"
+                value={id}
+                onChange={handleChange}
+                placeholder="Enter brand ID"
+                required
+                readOnly
+              />
+            </div>
             <div className="form-group">
               <label htmlFor="name">Name:</label>
               <input
@@ -78,9 +112,9 @@ function AddBrand() {
               type="submit"
               className="btn btn-outline-dark btn-white btn-block"
             >
-              Add Brand
+              Update Brand
             </button>
-            <br />
+            <br/>
             {message && <p className="text-danger text-center">{message}</p>}
             <Link
               to="/brand/list"
@@ -95,4 +129,4 @@ function AddBrand() {
   );
 }
 
-export default AddBrand;
+export default UpdateBrand;

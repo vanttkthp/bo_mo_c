@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { NavLink, Routes, Route } from "react-router-dom";
 
-import BooksList from "./admin/Book/controller/BooksList";
+import BooksList from "./admin/Book/book/BooksList";
 import AuthorsList from "./admin/Book/author/AuthorsList";
 import PublishersList from "./admin/Book/publisher/PublishersList";
 import CategoriesList from "./admin/Book/category/CategoriesList";

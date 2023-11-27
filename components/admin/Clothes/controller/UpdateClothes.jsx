@@ -4,20 +4,14 @@ import axios from "axios";
 import { initializeApp } from "firebase/app";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-function UpdateBook() {
+function UpdateClothes() {
 
-  const { id: bookId } = useParams();
-  const [book, setBook] = useState({
-    id: bookId,
-    title: "",
-    authorId: "",
-    publisherId: "",
-    description: "",
-    publishYear: "",
-    numerOfPages: "",
-    language: "",
-    image: "",
-    price: "",
+  const { id: clothesId } = useParams();
+  const [clothes, setClothes] = useState({
+    id: clothesId,
+    name: "",
+    size: "",
+    price: 0.0,
   });
 
   const firebaseConfig = {
@@ -36,18 +30,18 @@ function UpdateBook() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadBook();
+    loadClothes();
   }, []);
 
-  const loadBook = async () => {
+  const loadClothes = async () => {
     const result = await axios.get(
-      `http://localhost:8080/books/getById?id=${bookId}`
+      `http://localhost:8080/clothes/getById?id=${clothesId}`
     );
-    setBook(result.data);
+    setClothes(result.data);
   };
 
   const [selectedImage, setSelectedImage] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(book.image);
+  const [previewUrl, setPreviewUrl] = useState(clothes.image);
 
 
   const handleInputChange = (e) => {
@@ -55,31 +49,31 @@ function UpdateBook() {
       const file = e.target.files[0];
       setSelectedImage(file);
       previewImage(file);
-      setBook({ ...book, [e.target.name]: file }); // Cập nhật giá trị 'image' trong book
+      setClothes({ ...clothes, [e.target.name]: file }); // Cập nhật giá trị 'image' trong clothes
     } else {
       const { name, value } = e.target;
-      setBook({ ...book, [name]: value });
+      setClothes({ ...clothes, [name]: value });
     }
   };
 
   const handleSave = async (event) => {
     event.preventDefault();
     try {
-      let downloadURL = book.image; // Giữ nguyên giá trị ban đầu nếu không có ảnh mới được chọn
+      let downloadURL = clothes.image; // Giữ nguyên giá trị ban đầu nếu không có ảnh mới được chọn
       if (selectedImage) {
         const storageRef = ref(storage, `book_covers/${selectedImage.name}`);
         await uploadBytes(storageRef, selectedImage);
         downloadURL = await getDownloadURL(storageRef);
       }
 
-      const bookData = {
-        ...book,
+      const clothesData = {
+        ...clothes,
         image: downloadURL,
       };
-      console.log(bookData);
-      await axios.post(`http://localhost:8080/books/update`, bookData);
+      console.log(clothesData);
+      await axios.post(`http://localhost:8080/clothes/update`, clothesData);
 
-      navigate("/books");
+      navigate("/clothes/list");
     } catch (error) {
       if (error.response && error.response.data) {
         showMessage(error.response.data);
@@ -113,109 +107,61 @@ function UpdateBook() {
   };
 
   return (
-    <form id="book-form" className="mb-3 ">
+    <form id="clothes-form" className="mb-3 ">
       <div
         className="container mt-5 card shadow border bg-white"
         style={{ backgroundColor: "#f2f2f2" }}
       >
         <div className="row">
           <div className="col-md-6">
-            <h2>Book Information</h2>
+            <h2>Clothes Information</h2>
             {message && <p className="text-danger">{message}</p>}
-            <div className="form-row">
-              <div className="form-group col-md-6">
-                <label htmlFor="title" className="form-label">
-                  Title*
+          
+            <div className="form-group">
+                <label htmlFor="name" className="form-label">
+                  Name*
                 </label>
                 <input
-                  type="text"
+                  type={"text"}
                   className="form-control"
-                  placeholder="Enter book title"
-                  name="title"
-                  value={book.title}
-                  onChange={handleInputChange}
+                  placeholder="Enter Clothes name"
+                  name="name"
+                  value={clothes.name}
+                  onChange={(e) => handleInputChange(e)}
+                  required
                 />
               </div>
-              <div className="form-group col-md-6">
-                <label htmlFor="book-authorId">Author*</label>
+              <div className="form-group">
+                <label htmlFor="clothes-brandId">Brand*</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="book-authorId"
-                  placeholder="Enter book author id"
-                  name="authorId"
-                  value={book.authorId}
-                  onChange={handleInputChange}
+                  id="clothes-brandId"
+                  placeholder="Enter brandId"
+                  name="brandId"
+                  value={clothes.brandId}
+                  onChange={(e) => handleInputChange(e)}
+                  min={1}
+                  required
                 />
               </div>
-            </div>
+              <div className="form-group">
+                <label htmlFor="clothes-size">Size*</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="clothes-size"
+                  placeholder="Enter size"
+                  name="size"
+                  value={clothes.size}
+                  onChange={(e) => handleInputChange(e)}
+                  min={1}
+                  required
+                />
+              </div>
+            
 
-            <div className="form-row">
-              <div className="form-group col-md-6">
-                <label htmlFor="publisherId">Publisher Id*</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="publisherId"
-                  name="publisherId"
-                  value={book.publisherId}
-                  onChange={handleInputChange}
-                />
-              </div>
-              <div className="form-group col-md-6">
-                <label htmlFor="publishYear">Publisher Year*</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="publishYear"
-                  name="publishYear"
-                  value={book.publishYear}
-                  onChange={handleInputChange}
-                  onKeyPress={handleKeyPress}
-                  min={1}
-                />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="book-language">Language*</label>
-              <input
-                type="text"
-                className="form-control"
-                id="book-language"
-                placeholder="Enter language"
-                name="language"
-                value={book.language}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="form-row">
-              <div className="form-group col-md-6">
-                <label htmlFor="book-numerOfPages">Pages*</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="book-numerOfPages"
-                  placeholder="Enter book pages"
-                  name="numerOfPages"
-                  value={book.numerOfPages}
-                  onChange={handleInputChange}
-                  min={1}
-                />
-              </div>
-              <div className="form-group col-md-6">
-                <label htmlFor="book-price">Price*</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="book-price"
-                  name="price"
-                  value={book.price}
-                  onChange={handleInputChange}
-                  onKeyPress={handleKeyPress}
-                  min={1}
-                />
-              </div>
-            </div>
+          
             {/* <div className="form-group">
               <label htmlFor="book-category">Category*</label>
               <select
@@ -237,25 +183,26 @@ function UpdateBook() {
               </select>
             </div> */}
             <div className="form-group">
-              <label htmlFor="book-description">Description</label>
-              <textarea
-                className="form-control"
-                id="book-description"
-                rows="3"
-                value={book.description}
-                name="description"
-                onChange={handleInputChange}
-              ></textarea>
-            </div>
+                <label htmlFor="clothes-price">Price*</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  id="clothes-price"
+                  placeholder="Enter clothes price"
+                  name="price"
+                  value={clothes.price}
+                  onChange={(e) => handleInputChange(e)}
+                  min={1}
+                />
+              </div>
           </div>
           <div className="col-md-6">
-            <h2>Upload Book Cover</h2>
+            <h2>Upload Clothes Image</h2>
             <div className="form-group">
-              <label htmlFor="book-image">Choose a file</label>
               <div className="mb-3">
                 <input
                   type="file"
-                  id="book-image"
+                  id="clothes-image"
                   name="image"
                   onChange={handleInputChange}
                 />
@@ -270,8 +217,8 @@ function UpdateBook() {
                 )}
                 {!previewUrl && (
                   <img
-                    src={book.image}
-                    alt={book.title}
+                    src={clothes.image}
+                    alt={clothes.name}
                     className="rounded border mt-2"
                   />
                 )}
@@ -288,4 +235,4 @@ function UpdateBook() {
   );
 }
 
-export default UpdateBook;
+export default UpdateClothes;

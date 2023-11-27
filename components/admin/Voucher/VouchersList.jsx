@@ -2,29 +2,31 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import Menu from "../../../Menu";
 
-function BooksList() {
-  const [books, setBooks] = useState([]);
+
+function VouchersList() {
+  const [vouchers, setVouchers] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalVouchers, setTotalVouchers] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/books/search?keyword=${searchKeyword}&page=${currentPage}&size=2&sortString=id`
+          `http://localhost:8080/voucher/search?keyword=${searchKeyword}&page=${currentPage}&size=2&sortString=id`
         );
 
-        if (response.data && Array.isArray(response.data.listBooks)) {
-          setBooks(response.data.listBooks);
+        if (response.data && Array.isArray(response.data.listVouchers)) {
+          setVouchers(response.data.listVouchers);
           setTotalPages(response.data.totalPages);
+          setTotalVouchers(response.data.totalItems);
         } else {
           console.error("Invalid data format received.");
         }
       } catch (error) {
-        console.error("Error fetching Books:", error);
+        console.error("Error fetching Vouchers:", error);
       }
     };
 
@@ -60,15 +62,16 @@ function BooksList() {
     >
      
       <div className="container">
+        
         <div className="py-4">
-          <h2 className="text-center">Book Information</h2>
+          <h2 className="text-center">{totalVouchers} Vouchers</h2>
           <div className="row">
             <div className="col-md-6 mb-3">
               <input
                 style={{ width: "100%", outlineColor: "pink" }}
                 type="text"
                 className="form-control"
-                placeholder="Search for books..."
+                placeholder="Search for Vouchers..."
                 value={searchKeyword}
                 onChange={handleSearch}
               />
@@ -76,7 +79,7 @@ function BooksList() {
             <div className="col-md-6 mb-3">
               {localStorage.getItem("isAdmin") ? (
                 <Link
-                  to="/books/add"
+                  to="/vouchers/add"
                   className="btn btn-outline-dark btn-white btn-block"
                 >
                   ADD NEW
@@ -88,65 +91,37 @@ function BooksList() {
             <thead className="thead-dark">
               <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Title</th>
-                <th scope="col">Author</th>
-
-                <th scope="col"><Link to="/publisher/list" className="nav-link">
-                    Publisher
-                  </Link></th>
-                <th scope="col">Published Year</th>
-                <th scope="col">Pages</th>
-                <th scope="col">Cover</th>
-                <th scope="col">Language</th>
-                <th scope="col">Category</th>
-
-                <th scope="col">Price</th>
+                <th scope="col">Discount Name</th>
+                <th scope="col">Expired Time</th>
+                <th scope="col">Discount Percent</th>
+                <th scope="col">Condition</th>
+       
+             
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {books.map((book) => (
-                <tr key={book.id}>
-                  <td style={{ verticalAlign: "middle" }}>{book.id}</td>
-                  <td style={{ verticalAlign: "middle" }}>{book.title}</td>
-                  <td style={{ verticalAlign: "middle" }}>{book.authorName}</td>
+              {vouchers.map((voucher) => (
+                <tr key={voucher.id}>
+                  <td style={{ verticalAlign: "middle" }}>{voucher.id}</td>
+                  <td style={{ verticalAlign: "middle" }}>{voucher.nameDiscount}</td>
+                  <td style={{ verticalAlign: "middle" }}>{voucher.exprireTime}</td>
                   <td style={{ verticalAlign: "middle" }}>
-                    {book.publisherName}
+                    {voucher.discountPercent}
                   </td>
                   <td style={{ verticalAlign: "middle" }}>
-                    {book.publishYear}
+                    {voucher.conditionUsing}
                   </td>
-                  <td style={{ verticalAlign: "middle" }}>
-                    {book.numerOfPages}
-                  </td>
-                  <td style={{ verticalAlign: "middle" }}>
-                    <img
-                      src={book.image}
-                      alt={book.title}
-                      className="rounded border mt-2"
-                      style={{ maxWidth: "60px", maxHeight: "100px" }}
-                    />
-                  </td>
-                  <td style={{ verticalAlign: "middle" }}>{book.language}</td>
-                  <td style={{ verticalAlign: "middle" }}>
-                  {book.categoryName && Array.isArray(book.categoryName) ? (
-                      book.categoryName.length > 2 ? (
-                        book.categoryName.slice(0, 2).join(', ') + '...'
-                      ) : (
-                        book.categoryName.join(', ')
-                      )
-                    ) : (
-                      'No categories'
-                    )}
-                  </td>
-                  <td style={{ verticalAlign: "middle" }}>{book.price}</td>
+                 
+                
+                  
                   <td style={{ verticalAlign: "middle" }}>
                     <div>
                       {localStorage.getItem("isAdmin") ? (
                         <div>
                           <Link
                             className="btn btn-outline-dark mx-2"
-                            to={`/books/update/${book.id}`}
+                            to={`/vouchers/update/${voucher.id}`}
                           >
                             Update
                           </Link>
@@ -207,4 +182,4 @@ function BooksList() {
   );
 }
 
-export default BooksList;
+export default VouchersList;

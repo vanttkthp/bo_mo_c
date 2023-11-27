@@ -1,31 +1,31 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { useLocation } from "react-router-dom";
 
-function PublishersList() {
-  const [publishers, setPublishers] = useState([]);
+function BrandsList() {
+  const [brands, setBrands] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalPublishers, setTotalPublishers] = useState(0);
+  const [totalBrands, setTotalBrands] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/publisher/search?keyword=${searchKeyword}&page=${currentPage}&size=4&sortString=name`
+          `http://localhost:8080/brand/search?keyword=${searchKeyword}&page=${currentPage}&size=4&sortString=name`
         );
 
-        if (response.data && Array.isArray(response.data.listPublishers)) {
-          setPublishers(response.data.listPublishers);
+        if (response.data && Array.isArray(response.data.listAuthors)) {
+          setBrands(response.data.listAuthors);
           setTotalPages(response.data.totalPages);
-          setTotalPublishers(response.data.totalItems);
+          setTotalBrands(response.data.totalItems);
+
         } else {
           console.error("Invalid data format received.");
         }
       } catch (error) {
-        console.error("Error fetching publishers:", error);
+        console.error("Error fetching brands:", error);
       }
     };
 
@@ -38,8 +38,9 @@ function PublishersList() {
 
   const handleSearch = (e) => {
     setSearchKeyword(e.target.value);
-    setCurrentPage(0); // Đặt currentPage về trang đầu tiên khi searchKeyword thay đổi
+    setCurrentPage(0);
   };
+
   const handlePrevious = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
@@ -53,28 +54,27 @@ function PublishersList() {
   };
 
   return (
-    <div
-      className="container card shadow border mb-5"
-      style={{ backgroundColor: "#white" }}
-    >
+    <div className="container card shadow border mb-5">
       <div className="container">
         <div className="py-4">
-          <h2 className="text-center">{totalPublishers} Publishers</h2>
+          <h2 className="text-center">{totalBrands} Brands</h2>
           <div className="row">
             <div className="col-md-6 mb-3">
               <input
                 style={{ width: "100%", outlineColor: "pink" }}
                 type="text"
                 className="form-control"
-                placeholder="Search for publishers..."
+                placeholder="Search for brands..."
                 value={searchKeyword}
                 onChange={handleSearch}
               />
             </div>
+            {/* You can modify the condition to display the Add New button based on user role */}
             <div className="col-md-6 mb-3">
+              {/* Assuming you have a condition to check user role */}
               {localStorage.getItem("isAdmin") ? (
                 <Link
-                  to="/publisher/add"
+                  to="/brand/add"
                   className="btn btn-outline-dark btn-white btn-block"
                 >
                   ADD NEW
@@ -82,29 +82,28 @@ function PublishersList() {
               ) : null}
             </div>
           </div>
-          <table className="table table-hover ">
+          <table className="table table-hover">
             <thead className="thead-dark">
               <tr>
                 <th scope="col">ID</th>
-
                 <th scope="col">Name</th>
                 <th scope="col">Headquarter</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {publishers.map((publisher) => (
-                <tr key={publisher.id}>
-                  <td>{publisher.id}</td>
-                  <td>{publisher.name}</td>
-                  <td>{publisher.headquarter}</td>
+              {brands.map((brand) => (
+                <tr key={brand.id}>
+                  <td>{brand.id}</td>
+                  <td>{brand.name}</td>
+                  <td>{brand.headquarter}</td>
                   <td>
                     <div>
                       {localStorage.getItem("isAdmin") ? (
                         <div>
                           <Link
                             className="btn btn-outline-dark mx-2"
-                            to={`/publisher/update/${publisher.id}`}
+                            to={`/brand/update/${brand.id}`}
                           >
                             Update
                           </Link>
@@ -161,7 +160,7 @@ function PublishersList() {
         </div>
       </div>
       <Link
-        to="/books"
+        to="/clothes/list"
         className="text-decoration-none text-blue text-center mb-3"
       >
         Turn back
@@ -170,4 +169,4 @@ function PublishersList() {
   );
 }
 
-export default PublishersList;
+export default BrandsList;

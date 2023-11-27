@@ -1,31 +1,30 @@
 import React, { useState, useEffect } from "react";
-
 import axios from "axios";
 import { Link } from "react-router-dom";
-import "./fitsize.css";
-import { FaSearch } from "react-icons/fa";
 
-function BookShopList() {
-  const [books, setBooks] = useState([]);
+function CloCategoriesList() {
+  const [categories, setCategories] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalCategories, setTotalCategories] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/books/search?keyword=${searchKeyword}&page=${currentPage}&size=4&sortString=id`
+          `http://localhost:8080/clothesCategory/search?keyword=${searchKeyword}&page=${currentPage}&size=4&sortString=name`
         );
 
         if (response.data && Array.isArray(response.data.listBooks)) {
-          setBooks(response.data.listBooks);
+          setCategories(response.data.listBooks);
           setTotalPages(response.data.totalPages);
+          setTotalCategories(response.data.totalItems);
         } else {
           console.error("Invalid data format received.");
         }
       } catch (error) {
-        console.error("Error fetching Books:", error);
+        console.error("Error fetching categories:", error);
       }
     };
 
@@ -38,8 +37,9 @@ function BookShopList() {
 
   const handleSearch = (e) => {
     setSearchKeyword(e.target.value);
-    setCurrentPage(0); // Đặt currentPage về trang đầu tiên khi searchKeyword thay đổi
+    setCurrentPage(0);
   };
+
   const handlePrevious = () => {
     if (currentPage > 0) {
       setCurrentPage(currentPage - 1);
@@ -52,51 +52,62 @@ function BookShopList() {
     }
   };
 
-  const bookList = books.map((book) => (
-    <div className="col-md-3 mb-3 card-deck hover-zoom" key={book.id}>
-      <Link
-        to={`/book/${book.id}`}
-        className="card d-flex flex-column align-items-center bg-white custom-link border-0 text-decoration-none text-dark"
-      >
-        <img
-          src={book.image}
-          alt={book.title}
-          className="rounded border mt-2"
-        />
-        <div className="card-body text-center">
-          <h5 className="card-title">{book.title}</h5>
-          <h6 className="card-title">{book.authorName}</h6>
-          <h7 className="card-text position-absolute bottom-0 start-50 translate-middle-x">
-            {book.price} $
-          </h7>
-        </div>
-      </Link>
-    </div>
-  ));
-  
-
   return (
-  <div>
-      
-      <h1 className="my-5 text-center">Find Your Book</h1>
-      <div className="mb-3 d-flex justify-content-center align-items-center">
-        <form onSubmit={handleSearch} className="d-flex">
-          <input
-            type="text"
-            className="form-control rounded-pill mr-2 custom-input"
-            style={{ width: "500px", outlineColor: "pink" }}
-            placeholder="Search..."
-            value={searchKeyword}
-            onChange={handleSearch}
-          />
-          <button type="submit" className="btn btn-outline-dark rounded-pill">
-            <FaSearch />
-          </button>
-        </form>
-      </div>
-      <br></br>
-      <div className="row justify-content-center">{bookList}</div>
-      <nav
+    <div className="container card shadow border mb-5">
+      <div className="container">
+        <div className="py-4">
+          <h2 className="text-center">{totalCategories} Clothing Categories</h2>
+          <div className="row">
+            <div className="col-md-6 mb-3">
+              <input
+                style={{ width: "100%", outlineColor: "pink" }}
+                type="text"
+                className="form-control"
+                placeholder="Search for categories..."
+                value={searchKeyword}
+                onChange={handleSearch}
+              />
+            </div>
+            <div className="col-md-6 mb-3">
+              {localStorage.getItem("isAdmin") ? (
+                <Link
+                  to="/clocategory/add"
+                  className="btn btn-outline-dark btn-white btn-block"
+                >
+                  ADD NEW
+                </Link>
+              ) : null}
+            </div>
+          </div>
+          <table className="table table-hover">
+            <thead className="thead-dark">
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Name</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories.map((category) => (
+                <tr key={category.id}>
+                  <td>{category.id}</td>
+                  <td>{category.name}</td>
+                  <td>
+                    <div>
+                      <Link
+                        className="btn btn-outline-dark mx-2"
+                        to={`/clocategory/update/${category.id}`}
+                      >
+                        Update
+                      </Link>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div>
+            <nav
               aria-label="Page navigation example"
               style={{ display: "flex", justifyContent: "center" }}
             >
@@ -136,7 +147,17 @@ function BookShopList() {
                 </li>
               </ul>
             </nav>
-            </div>
+          </div>
+        </div>
+      </div>
+      <Link
+        to="/clothes/list"
+        className="text-decoration-none text-blue text-center mb-3"
+      >
+        Turn back
+      </Link>
+    </div>
   );
 }
-export default BookShopList;
+
+export default CloCategoriesList;

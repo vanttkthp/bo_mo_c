@@ -8,6 +8,7 @@ function CategoriesList() {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalCategories, setTotalCategories] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,6 +20,7 @@ function CategoriesList() {
         if (response.data && Array.isArray(response.data.listBooks)) {
           setCategories(response.data.listBooks);
           setTotalPages(response.data.totalPages);
+          setTotalCategories(response.data.totalItems);
         } else {
           console.error("Invalid data format received.");
         }
@@ -58,7 +60,7 @@ function CategoriesList() {
     >
       <div className="container">
         <div className="py-4">
-          <h2 className="text-center">Category Information</h2>
+          <h2 className="text-center">{totalCategories} categories</h2>
           <div className="row">
             <div className="col-md-6 mb-3">
               <input

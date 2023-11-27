@@ -3,29 +3,29 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
-function PublishersList() {
-  const [publishers, setPublishers] = useState([]);
+function ProducersList() {
+  const [producers, setProducers] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
-  const [totalPublishers, setTotalPublishers] = useState(0);
+  const [totalProducers, setTotalProducers] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/publisher/search?keyword=${searchKeyword}&page=${currentPage}&size=4&sortString=name`
+          `http://localhost:8080/producer/search?keyword=${searchKeyword}&page=${currentPage}&size=4&sortString=name`
         );
 
-        if (response.data && Array.isArray(response.data.listPublishers)) {
-          setPublishers(response.data.listPublishers);
+        if (response.data && Array.isArray(response.data.listProducers)) {
+          setProducers(response.data.listProducers);
           setTotalPages(response.data.totalPages);
-          setTotalPublishers(response.data.totalItems);
+          setTotalProducers(response.data.totalItems);
         } else {
           console.error("Invalid data format received.");
         }
       } catch (error) {
-        console.error("Error fetching publishers:", error);
+        console.error("Error fetching producers:", error);
       }
     };
 
@@ -59,14 +59,14 @@ function PublishersList() {
     >
       <div className="container">
         <div className="py-4">
-          <h2 className="text-center">{totalPublishers} Publishers</h2>
+          <h2 className="text-center">{totalProducers} Producers</h2>
           <div className="row">
             <div className="col-md-6 mb-3">
               <input
                 style={{ width: "100%", outlineColor: "pink" }}
                 type="text"
                 className="form-control"
-                placeholder="Search for publishers..."
+                placeholder="Search for producers..."
                 value={searchKeyword}
                 onChange={handleSearch}
               />
@@ -74,7 +74,7 @@ function PublishersList() {
             <div className="col-md-6 mb-3">
               {localStorage.getItem("isAdmin") ? (
                 <Link
-                  to="/publisher/add"
+                  to="/producer/add"
                   className="btn btn-outline-dark btn-white btn-block"
                 >
                   ADD NEW
@@ -93,18 +93,18 @@ function PublishersList() {
               </tr>
             </thead>
             <tbody>
-              {publishers.map((publisher) => (
-                <tr key={publisher.id}>
-                  <td>{publisher.id}</td>
-                  <td>{publisher.name}</td>
-                  <td>{publisher.headquarter}</td>
+              {producers.map((producer) => (
+                <tr key={producer.id}>
+                  <td>{producer.id}</td>
+                  <td>{producer.name}</td>
+                  <td>{producer.headquarter}</td>
                   <td>
                     <div>
                       {localStorage.getItem("isAdmin") ? (
                         <div>
                           <Link
                             className="btn btn-outline-dark mx-2"
-                            to={`/publisher/update/${publisher.id}`}
+                            to={`/producer/update/${producer.id}`}
                           >
                             Update
                           </Link>
@@ -170,4 +170,4 @@ function PublishersList() {
   );
 }
 
-export default PublishersList;
+export default ProducersList;

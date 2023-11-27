@@ -1,37 +1,40 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 
-function AddProducer() {
-  const [producer, setProducer] = useState({
+function UpdateProducer() {
+  const { id: producerId } = useParams();
+  const [producerData, setProducerData] = useState({
+    id: producerId,
     name: "",
     headquarter: "",
   });
-  const navigate = useNavigate();
 
-  const { name, headquarter } = producer;
+  const { id, name, headquarter } = producerData;
   const [message, setMessage] = useState("");
 
   const handleChange = (e) => {
-    setProducer({ ...producer, [e.target.name]: e.target.value });
+    setProducerData({ ...producerData, [e.target.name]: e.target.value });
   };
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:8080/producer/add", producer);
-      showMessage("producer added successfully!");
-      setProducer({ name: "", headquarter: "" });
+      await axios.post("http://localhost:8080/producer/update", producerData);
+      showMessage("producer updated successfully!");
+      setProducerData({ id: "", name: "", headquarter: "" });
       navigate("/producer/list");
     } catch (error) {
       if (error.response && error.response.data) {
         showMessage(error.response.data);
       } else {
-        showMessage("Error adding producer.");
+        showMessage("Error updating producer.");
       }
-      console.error("Error adding producer:", error);
+      console.error("Error updating producer:", error);
     }
+    
   };
 
   const showMessage = (msg) => {
@@ -40,14 +43,45 @@ function AddProducer() {
       setMessage("");
     }, 2000); // Hiển thị trong 3 giây
   };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/producer/getById?id=${producerId}`
+        );
+        if (response.data) {
+          const { name, headquarter } = response.data;
+          setProducerData({ ...producerData, name, headquarter });
+        } else {
+          console.error("No author data found");
+        }
+      } catch (error) {
+        console.error("Error fetching author data:", error);
+      }
+    };
+    fetchData();
+  }, [producerId]);
 
   return (
     <div className="container">
       <div className="row justify-content-center align-items-center">
         <div className="col-md-4">
           <form onSubmit={handleSubmit} className="card p-4">
-            <h2 className="text-center mb-4">Add Producer</h2>
-
+            <h2 className="text-center mb-4">Update Producer</h2>
+            
+            <div className="form-group">
+              <label htmlFor="id">ID:</label>
+              <input
+                type="text"
+                className="form-control"
+                id="id"
+                name="id"
+                value={id}
+                onChange={handleChange}
+                placeholder="Enter producer ID"
+                readOnly
+              />
+            </div>
             <div className="form-group">
               <label htmlFor="name">Name:</label>
               <input
@@ -58,7 +92,6 @@ function AddProducer() {
                 value={name}
                 onChange={handleChange}
                 placeholder="Enter producer name"
-                required
               />
             </div>
             <div className="form-group">
@@ -71,16 +104,15 @@ function AddProducer() {
                 value={headquarter}
                 onChange={handleChange}
                 placeholder="Enter producer headquarter"
-                required
               />
             </div>
             <button
               type="submit"
               className="btn btn-outline-dark btn-white btn-block"
             >
-              Add Producer
+              Update Producer
             </button>
-            <br />
+            <br/>
             {message && <p className="text-danger text-center">{message}</p>}
             <Link
               to="/producer/list"
@@ -89,10 +121,11 @@ function AddProducer() {
               Turn back
             </Link>
           </form>
+          
         </div>
       </div>
     </div>
   );
 }
 
-export default AddProducer;
+export default UpdateProducer;

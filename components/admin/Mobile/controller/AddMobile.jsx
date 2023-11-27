@@ -6,19 +6,19 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-function AddBook() {
+function AddMobile() {
   let navigate = useNavigate();
 
-  const [book, setBook] = useState({
-    title: "",
-    authorId: "",
-    publisherId: "",
-    description: "",
-    publishYear: "",
-    numerOfPages: "",
-    language: "",
+  const [mobile, setMobile] = useState({
+    producerId: "",
+    name: "",
     image: "",
+    osType: "",
+    description: "",
     price: "",
+  });
+  const [bookCategory, setBookCategory] = useState({
+    name: "",
   });
 
   const firebaseConfig = {
@@ -49,7 +49,7 @@ function AddBook() {
       setSelectedImage(file);
       setPreviewUrl(URL.createObjectURL(file));
     } else {
-      setBook({ ...book, [e.target.name]: e.target.value });
+      setMobile({ ...mobile, [e.target.name]: e.target.value });
     }
   };
 
@@ -61,23 +61,23 @@ function AddBook() {
         const storageRef = ref(storage, `book_covers/${selectedImage.name}`);
         await uploadBytes(storageRef, selectedImage);
         const downloadURL = await getDownloadURL(storageRef);
-        const bookData = {
-          ...book,
+        const mobileData = {
+          ...mobile,
           image: downloadURL,
         };
 
-        await axios.post("http://localhost:8080/books/add", bookData);
+        await axios.post("http://localhost:8080/mobiles/add", mobileData);
 
-        navigate("/books");
+        navigate("/mobiles");
       } else {
-        const bookData = {
-          ...book,
+        const mobileData = {
+          ...mobile,
           image: "",
         };
 
-        await axios.post("http://localhost:8080/books/add", bookData);
+        await axios.post("http://localhost:8080/mobiles/add", mobileData);
 
-        navigate("/books");
+        navigate("/mobiles");
       }
     } catch (error) {
       if (error.response && error.response.data) {
@@ -113,39 +113,39 @@ function AddBook() {
   };
 
   return (
-    <form onSubmit={(e) => onSubmit(e)} id="book-form" className="mb-3">
+    <form onSubmit={(e) => onSubmit(e)} id="mobile-form" className="mb-3">
       <div
         className="container mt-5 card shadow border bg-white"
         style={{ backgroundColor: "#f2f2f2" }}
       >
         <div className="row">
           <div className="col-md-6">
-            <h2>Book Information</h2>
+            <h2>Mobile Information</h2>
             {message && <p className="text-danger">{message}</p>}
             <div className="form-row">
               <div className="form-group col-md-6">
-                <label htmlFor="Title" className="form-label">
-                  Title*
+                <label htmlFor="name" className="form-label">
+                  Name*
                 </label>
                 <input
                   type={"text"}
                   className="form-control"
-                  placeholder="Enter book title"
-                  name="title"
-                  value={book.title}
+                  placeholder="Enter mobile name"
+                  name="name"
+                  value={mobile.name}
                   onChange={(e) => onInputChange(e)}
                   required
                 />
               </div>
               <div className="form-group col-md-6">
-                <label htmlFor="book-authorId">Author*</label>
+                <label htmlFor="mobile-producerId">Producer Id*</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="book-authorId"
-                  placeholder="Enter AuthorId"
-                  name="authorId"
-                  value={book.authorId}
+                  id="mobile-producerId"
+                  placeholder="Enter producerId"
+                  name="producerId"
+                  value={mobile.producerId}
                   onChange={(e) => onInputChange(e)}
                   min={1}
                   required
@@ -155,68 +155,28 @@ function AddBook() {
 
             <div className="form-row">
               <div className="form-group col-md-6">
-                <label htmlFor="book-publisherId">Publisher Id*</label>
+                <label htmlFor="mobile-osType">OS TYPE*</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="book-publisherId"
+                  id="mobile-osType"
                   placeholder="Enter publisher Id"
-                  name="publisherId"
-                  value={book.publisherId}
+                  name="osType"
+                  value={mobile.osType}
                   onChange={(e) => onInputChange(e)}
                   min={1}
                   required
                 />
               </div>
               <div className="form-group col-md-6">
-                <label htmlFor="publishYear">Publish Year*</label>
+                <label htmlFor="mobile-price">Price*</label>
                 <input
                   type="number"
                   className="form-control"
-                  id="publishYear"
-                  name="publishYear"
-                  value={book.publishYear}
-                  onChange={(e) => onInputChange(e)}
-                  placeholder="Enter publisher year"
-                  min={1}
-                />
-              </div>
-            </div>
-            <div className="form-group">
-              <label htmlFor="book-publisherId">Language*</label>
-              <input
-                type="text"
-                className="form-control"
-                id="book-language"
-                placeholder="Enter language"
-                name="language"
-                value={book.language}
-                onChange={(e) => onInputChange(e)}
-              />
-            </div>
-            <div className="form-row">
-              <div className="form-group col-md-6">
-                <label htmlFor="book-numerOfPages">Pages*</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="book-numerOfPages"
-                  placeholder="Enter book pages"
-                  name="numerOfPages"
-                  value={book.numerOfPages}
-                  onChange={(e) => onInputChange(e)}
-                  min={1}
-                />
-              </div>
-              <div className="form-group col-md-6">
-                <label htmlFor="book-price">Price*</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  id="book-price"
-                  placeholder="Enter book price"
+                  id="mobile-price"
+                  placeholder="Enter mobile price"
                   name="price"
-                  value={book.price}
+                  value={mobile.price}
                   onChange={(e) => onInputChange(e)}
                   min={1}
                 />
@@ -224,31 +184,32 @@ function AddBook() {
             </div>
 
             <div className="form-group">
-              <label htmlFor="book-description">Description</label>
+              <label htmlFor="mobile-description">Description</label>
               <textarea
                 className="form-control"
-                id="book-description"
+                id="mobile-description"
                 rows="3"
-                value={book.description}
+                value={mobile.description}
                 name="description"
                 onChange={(e) => onInputChange(e)}
               ></textarea>
             </div>
           </div>
           <div className="col-md-6">
-            <h2>Upload Book Cover</h2>
+            <h2>Upload Mobile Cover</h2>
             <div>
               <div className="form-group">
                 <input
                   type="file"
-                  id="book-image"
+                  id="mobile-image"
                   name="image"
                   onChange={(e) => {
                     const file = e.target.files[0];
                     onInputChange(e);
                     previewImage(file);
                   }}
-                  className="mb-3"
+                  className=""
+                  
                 />
               </div>
               <div className="form-group text-center">
@@ -257,6 +218,7 @@ function AddBook() {
                   src={previewUrl}
                   className="rounded border mt-2"
                   alt="Preview"
+                  style={{ maxWidth: "180px", maxHeight: "200px" }}
                 />
               </div>
             </div>
@@ -266,12 +228,18 @@ function AddBook() {
         <button
           type="submit"
           className="btn btn-outline-dark mb-3"
-          form="book-form"
+          form="mobile-form"
         >
-          Add
+          Add Mobile
         </button>
+        <Link
+          to="/mobiles"
+          className="text-decoration-none text-blue text-center mb-3"
+        >
+          Turn back
+        </Link>
       </div>
     </form>
   );
 }
-export default AddBook;
+export default AddMobile;
