@@ -163,7 +163,7 @@ function MobilesList() {
                   <td style={{ verticalAlign: "middle" }}>{mobile.price}</td>
                   <td style={{ verticalAlign: "middle" }}>
                     <div>
-                      {localStorage.getItem("isAdmin") ? (
+      
                         <div>
                           <Link
                             className="btn btn-outline-dark mx-2"
@@ -172,7 +172,7 @@ function MobilesList() {
                             Update
                           </Link>
                         </div>
-                      ) : null}
+           
                     </div>
                   </td>
                 </tr>

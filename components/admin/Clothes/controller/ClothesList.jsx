@@ -162,7 +162,7 @@ function ClothesList() {
                   {/* Add other columns you need */}
                   <td style={{ verticalAlign: "middle" }}>
                     <div>
-                      {localStorage.getItem("isAdmin") ? (
+    
                         <div>
                           <Link
                             className="btn btn-outline-dark mx-2"
@@ -171,7 +171,7 @@ function ClothesList() {
                             Update
                           </Link>
                         </div>
-                      ) : null}
+                  
                     </div>
                   </td>
                 </tr>
