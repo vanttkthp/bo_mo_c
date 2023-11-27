@@ -174,8 +174,8 @@ function App() {
       </div>
       <div className="container">
       <Routes>
-        {isLoggedIn() ? (
-          <>
+      
+          
             <Route path="/book/:id" element={<BookDetails />} />
             <Route path="/books/add" element={<AddBook />} />
             <Route path="/books/update/:id" element={<UpdateBook />} />
@@ -210,14 +210,12 @@ function App() {
             <Route path="/producer/list" element={<ProducersList />} />
             <Route path="/producer/add" element={<AddProducer />} />
             <Route path="/producer/update/:id" element={<UpdateProducer />} />
-            </>
-        ) : (
-          <>
+          
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/noaccess" element={<AccessDenied />} />
-            </>
-        )}
+          
+      
         </Routes>
       </div>
     </BrowserRouter>
