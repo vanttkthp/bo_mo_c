@@ -174,7 +174,7 @@ function App() {
       </div>
       <div className="container">
       <Routes>
-      
+      <Route path="/" element={<Home />} />
           
             <Route path="/book/:id" element={<BookDetails />} />
             <Route path="/books/add" element={<AddBook />} />
