@@ -1,0 +1,57 @@
+img {
+    width: 250px;
+    height: 350px;
+  }
+  .hover-zoom:hover .card-img-top {
+    transform: scale(1.1);
+  }
+  
+  .hover-zoom:hover .card {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  }
+  .btn-buy {
+    border-bottom: 10px solid gray;
+  }
+  .custom-link {
+    text-decoration: none;
+    color: black;
+  }
+  .form-container {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+  }
+  .gradient-bg {
+    background: linear-gradient(to right, #ff00cc, #3333ff); /* Thay đổi mã màu gradient theo ý muốn */
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .star {
+    font-size: 24px;
+    color: gray;
+    cursor: pointer;
+  }
+  
+  .star.filled {
+    color: gold;
+  }
+  .custom-input:focus {
+    box-shadow: 0 0 5px 2px black;
+    outline: none;
+  }
+  .bill-container {
+    max-width: 400px; /* Điều chỉnh kích thước tối đa của bill */
+    border: 1px solid #000; /* Thêm đường viền đen xung quanh bill */
+    padding: 20px; /* Khoảng cách giữa nội dung và đường viền */
+  }
+  
+  .bill-table {
+    width: 100%; /* Đảm bảo bảng điền vào chiều rộng của bill */
+  }
+  
+  .bill-table th,
+  .bill-table td {
+    border: 1px solid #000; /* Thêm đường viền cho ô bảng */
+    padding: 5px; /* Khoảng cách bên trong ô bảng */
+  }

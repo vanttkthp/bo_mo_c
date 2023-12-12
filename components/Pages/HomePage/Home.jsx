@@ -5,9 +5,9 @@ import { Link } from "react-router-dom";
 import "./fitsize.css";
 import Tab from "react-bootstrap/Tab";
 import Tabs from "react-bootstrap/Tabs";
-import BookShopList from "./BookShopList";
-import MobileShopList from "./MobileShopList";
-import ClothesShopList from "./ClothesShopList";
+import BookShopList from "../BookPages/BookShopList";
+import MobileShopList from "../MobilePages/MobileShopList";
+import ClothesShopList from "../ClothesPages/ClothesShopList";
 function Home() {
   const [books, setBooks] = useState([]);
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -55,27 +55,7 @@ function Home() {
     }
   };
 
-  const bookList = books.map((book) => (
-    <div className="col-md-3 mb-3 card-deck hover-zoom" key={book.id}>
-      <Link
-        to={`/book/${book.id}`}
-        className="card d-flex flex-column align-items-center bg-white custom-link border-0 text-decoration-none text-dark"
-      >
-        <img
-          src={book.image}
-          alt={book.title}
-          className="rounded border mt-2"
-        />
-        <div className="card-body text-center">
-          <h5 className="card-title">{book.title}</h5>
-          <h6 className="card-title">{book.authorName}</h6>
-          <h7 className="card-text position-absolute bottom-0 start-50 translate-middle-x">
-            {book.price} $
-          </h7>
-        </div>
-      </Link>
-    </div>
-  ));
+
 
   return (
     <div

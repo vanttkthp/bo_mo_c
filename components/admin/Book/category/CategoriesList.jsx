@@ -73,14 +73,14 @@ function CategoriesList() {
               />
             </div>
             <div className="col-md-6 mb-3">
-              {localStorage.getItem("isAdmin") ? (
+              {/* {localStorage.getItem("isAdmin") ? ( */}
                 <Link
                   to="/category/add"
                   className="btn btn-outline-dark btn-white btn-block"
                 >
                   ADD NEW
                 </Link>
-              ) : null}
+             
             </div>
           </div>
           <table className="table table-hover ">
@@ -99,7 +99,7 @@ function CategoriesList() {
                   <td>{category.name}</td>
                   <td>
                     <div>
-                      {localStorage.getItem("isAdmin") ? (
+                      {/* {localStorage.getItem("isAdmin") ? ( */}
                         <div>
                           <Link
                             className="btn btn-outline-dark mx-2"
@@ -108,7 +108,7 @@ function CategoriesList() {
                             Update
                           </Link>
                         </div>
-                      ) : null}
+                      {/* // ) : null} */}
                     </div>
                   </td>
                 </tr>

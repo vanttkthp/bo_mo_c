@@ -2,47 +2,140 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { FaCheck } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import Cart from "../Cart/Cart";
+import { useParams } from "react-router-dom";
 
 function Order() {
+  const { id: order_Id } = useParams();
   const [cartItems, setCartItems] = useState([]);
   const userEmail = localStorage.getItem("userEmail");
+  const [totalPrice, setTotalPrice] = useState(0);
+  const [cartId, setCartId] = useState(0);
+  const [voucherList, setVoucherList] = useState([]);
+  const [selectedVoucher, setSelectedVoucher] = useState("");
+  const [orderInfo, setOrderInfo] = useState(null);
+  const [paymentDiscount, setPaymentDiscount] = useState(0); // orderId phải được thiết lập từ state hoặc props
+  const [shipmentType, setShipmentType] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("");
+  const [userData, setUserData] = useState({
+    idCus: 2,
+    email: "",
+    name: "",
+    tel: "",
+    username: "",
+  });
   useEffect(() => {
     fetchCartItems();
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/customer/getById?id=2`
+        );
+        if (response.data) {
+          const { idCus, email, name, tel, username } = response.data;
+          setUserData({ ...idCus, email, name, tel, username });
+        } else {
+          console.error("No voucher data found");
+        }
+      } catch (error) {
+        console.error("Error fetching voucher data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
   const fetchCartItems = async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/order/${userEmail}`
-      );
-      setCartItems(response.data);
+      const response = await axios.get(`http://localhost:8080/cart?userId=2`);
+      setCartItems(response.data.items);
+      
+      setCartId(response.data.cart_id);
     } catch (error) {
       console.error(error);
     }
   };
-  const deleteOrder = async (id) => {
-    try {
-      await axios.delete(`http://localhost:8080/order/${id}`);
-      fetchCartItems();
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  function handleDeleteClick(id) {
-    deleteOrder(id);
-  }
 
-  const updateOrder = async (id) => {
+  const handleConfirm = async () => {
     try {
-      await axios.put(`http://localhost:8080/order/${id}`, {
-        orderStatus: true,
-        quantity: cartItems.find((item) => item.id === id).orderQuantity,
-      });
-      fetchCartItems();
+      // Gọi API để tạo đơn hàng từ cartId
+      const response = await axios.post(
+        `http://localhost:8080/order/submit?orderId=${order_Id}`,
+        {}
+      );
+    } catch (error) {
+      // Xử lý lỗi nếu có
+      console.error("Error:", error);
+    }
+  };
+  useEffect(() => {
+    fetchVouchers();
+  }, []);
+
+  useEffect(() => {
+    // Call API to update orderId whenever selectedVoucher changes
+    updateForOrder();
+    console.log("Selected Voucher:", selectedVoucher);
+    console.log("Shipment Type:", shipmentType);
+    console.log("Payment", paymentMethod);
+  }, [selectedVoucher, shipmentType, paymentMethod]);
+
+  const fetchVouchers = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/voucher/getAll");
+      setVoucherList(response.data);
     } catch (error) {
       console.error(error);
     }
   };
+  const handlePaymentChange = (e) => {
+    setPaymentMethod(e.target.value);
+  };
+
+  const handleVoucherChange = (e) => {
+    setSelectedVoucher(e.target.value);
+  };
+
+  const handleShippingChange = (e) => {
+    setShipmentType(e.target.value);
+  };
+
+  const updateForOrder = async () => {
+    try {
+      // Gọi API để cập nhật voucherId cho orderId cụ thể
+      const response = await axios.post("http://localhost:8080/order/update", {
+        orderId: order_Id,
+        voucherId: selectedVoucher,
+        paymentType: paymentMethod, // Thay bằng giá trị thích hợp nếu có
+        shipmentType: shipmentType, // Thay bằng giá trị thích hợp nếu có
+      });
+      setPaymentDiscount(response.data.payment_discount);
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    const fetchOrderInfo = async () => {
+      try {
+        const response = await axios.get(
+          `http://localhost:8080/order/by-id?id=${order_Id}`
+        );
+        if (response.data) {
+          setOrderInfo(response.data);
+          
+          setTotalPrice(response.data.items_price);
+        }
+      } catch (error) {
+        console.error("Error fetching order data:", error);
+      }
+    };
+    fetchOrderInfo();
+  }, [order_Id]);
+  const shipCost = shipmentType === "1" ? 20 : 10;
+  const totalPayment = shipCost - paymentDiscount + totalPrice;
   return (
     <div className="container">
       <div className="">
@@ -54,7 +147,7 @@ function Order() {
         >
           <div className="row">
             <div className="col-md-6">
-              <h3>Your Information</h3>
+              <h5>Your Information</h5>
               <div className="form-group">
                 <label htmlFor="Title" className="form-label">
                   Full Name*
@@ -64,6 +157,7 @@ function Order() {
                   className="form-control"
                   placeholder="Enter your fullname"
                   name="title"
+                  value={userData.name}
                 />
               </div>
               <label htmlFor="book-category">Address*</label>
@@ -73,8 +167,6 @@ function Order() {
                   id="book-category"
                   name="category"
                   value="Mo Lao, Ha Dong, Ha Noi"
-               
-                
                 >
                   <option disabled>Select an address</option>
                   <option value="Science Fiction">
@@ -88,14 +180,11 @@ function Order() {
                   <option value="Self-help">Self-help</option>
                   <option value="Novel">Novel</option>
                 </select>
-                <button
-                  type="submit"
-                  className="btn btn-outline-dark"
-
-                >
+                <button type="submit" className="btn btn-outline-dark">
                   ADD
                 </button>
               </form>
+
               <div className="form-row">
                 <div className="form-group col-md-6">
                   <label htmlFor="Title" className="form-label">
@@ -106,6 +195,7 @@ function Order() {
                     className="form-control"
                     placeholder="Enter your email"
                     name="title"
+                    value={userData.email}
                   />
                 </div>
                 <div className="form-group col-md-6">
@@ -116,11 +206,12 @@ function Order() {
                     id="book-author"
                     placeholder="Enter your phone number"
                     name="author"
+                    value={userData.tel}
                   />
                 </div>
               </div>
 
-              <div className="form-group">
+              {/* <div className="form-group">
                 <label htmlFor="book-description">Note</label>
                 <textarea
                   className="form-control"
@@ -128,7 +219,7 @@ function Order() {
                   rows="3"
                   name="description"
                 ></textarea>
-              </div>
+              </div> */}
               {/* <div className="form-row">
                 <div className="form-group col-md-6">
                   <label htmlFor="book-release-date">Published Date*</label>
@@ -170,7 +261,7 @@ function Order() {
               </div> */}
             </div>
             <div className="col-md-6">
-              <h3>Payment Method</h3>
+              <h5>Payment Method</h5>
 
               <div
                 className="form-group border p-3 rounded"
@@ -180,8 +271,9 @@ function Order() {
                   <input
                     type="radio"
                     name="paymentMethod"
-                    value="cash"
+                    value={0}
                     id="paymentMethodCash"
+                    onClick={handlePaymentChange}
                   />
                   <span className="ml-2">Pay with cash</span>
                 </label>
@@ -197,46 +289,61 @@ function Order() {
                   <input
                     type="radio"
                     name="paymentMethod"
-                    value="card"
+                    value={1}
                     id="paymentMethodCard"
+                    onClick={handlePaymentChange}
                   />
                   <span className="ml-2">Pay with card</span>
                 </label>
               </div>
 
-              <h3>Shipment</h3>
               <div className="form-row">
                 <div className="form-group col-md-6">
-                  <label htmlFor="book-release-date">
-                    Shipping Service Provider*
+                  <label htmlFor="ship_method">
+                    <h5>Shipment</h5>
                   </label>
                   <select
                     className="form-control"
-                    id="book-category"
-                    name="category"
+                    id="ship_method"
+                    name="ship_method"
+                    onChange={handleShippingChange} // Sự kiện onChange
+                    value={shipmentType}
                   >
                     <option disabled>Select a Shipping Provider</option>
-                    <option value="Horror">GHTK</option>
-                    <option value="Romance">Shopee Delivery</option>
-                    <option value="Thriller">VNexpress</option>
+
+                    <option key={1} value={1}>
+                      Express
+                    </option>
+                    <option key={0} value={0}>
+                      Standard
+                    </option>
                   </select>
                 </div>
                 <div className="form-group col-md-6">
-                  <label htmlFor="book-release-date">Shipping Method*</label>
+                  <label htmlFor="voucher">
+                    <h5>Voucher</h5>
+                  </label>
                   <select
                     className="form-control"
-                    id="book-category"
-                    name="category"
+                    id="voucher"
+                    name="voucher"
+                    onChange={handleVoucherChange}
+                    value={selectedVoucher}
                   >
-                    <option disabled>Shipping Method</option>
-                    <option value="Horror">Standard</option>
-                    <option value="Romance">Express</option>
+                    <option key={1} value={0}>
+                      Select a voucher
+                    </option>
+
+                    {voucherList.map((voucher) => (
+                      <option key={voucher.id} value={voucher.id}>
+                        {voucher.conditionUsing} - {voucher.discountPercent}%
+                      </option>
+                    ))}
                   </select>
                 </div>
               </div>
-              <h3>Voucher</h3>
 
-              <div className="form-row">
+              {/* <div className="form-row">
                 <div className="form-group col-md-6">
                   <select
                     className="form-control"
@@ -264,18 +371,17 @@ function Order() {
                     </button>
                   </form>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
-          <table className="table border">
+
+          <table className="table">
             <thead>
               <tr>
                 <th scope="col">ID</th>
-                <th scope="col">Product</th>
-
-                <th scope="col">Quantity</th>
+                <th scope="col">Name</th>
                 <th scope="col">Price</th>
-                <th scope="col">Total</th>
+                <th scope="col">Quantity</th>
               </tr>
             </thead>
             <tbody>
@@ -287,40 +393,51 @@ function Order() {
                       href={`/book/${item.bookId}`}
                       style={{ textDecoration: "none", color: "black" }}
                     >
-                      {item.bookTitle}
+                      {item.name}
                     </a>
                   </td>
+                  <td>{item.price}</td>
+                  {/* <td>{item.quantity}</td> */}
+                  <td>
+                    {item.quantity}
+                    <td />
 
-                  <td>1</td>
-                  <td>10000</td>
-                  <td>10000</td>
+                    {/* <td>
+                      {item.orderStatus ? (
+                        <span className="text-dark">&#x2713;</span>
+                      ) : (
+                        <span className="text-danger">&#x2717;</span>
+                      )}
+                    </td> */}
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
           <div class="d-flex justify-content-between">
             <h6>Ship cost: </h6>
-            <h6>10000</h6>
+            <h6>{shipCost}</h6>
           </div>
           <div class="d-flex justify-content-between">
             <h6>Voucher: </h6>
-            <h6>-3000</h6>
+            <h6>-{paymentDiscount}</h6>
           </div>
           <div class="d-flex justify-content-between">
             <h6>Total product cost:</h6>
-            <h6>10000</h6>
+            <h6>{totalPrice}</h6>
           </div>
           <hr></hr>
           <div class="d-flex justify-content-between">
             <h4>Total payment : </h4>
-            <h4>17000</h4>
+            <h4>{totalPayment}</h4>
           </div>
         </div>
       </div>
       <div className="row mt-3">
         <div className="col-md-12 d-flex">
           <Link
-            to={`/user/bills`}
+            // to={`/user/bills`}
+            onClick={handleConfirm}
             type="submit"
             className="btn btn-outline-dark shadow mb-5"
             form="book-form"
@@ -330,6 +447,7 @@ function Order() {
           </Link>
         </div>
       </div>
+      
     </div>
   );
 }

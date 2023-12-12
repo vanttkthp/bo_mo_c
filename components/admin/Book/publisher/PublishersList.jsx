@@ -72,14 +72,14 @@ function PublishersList() {
               />
             </div>
             <div className="col-md-6 mb-3">
-              {localStorage.getItem("isAdmin") ? (
+              {/* {localStorage.getItem("isAdmin") ? ( */}
                 <Link
                   to="/publisher/add"
                   className="btn btn-outline-dark btn-white btn-block"
                 >
                   ADD NEW
                 </Link>
-              ) : null}
+              {/* ) : null} */}
             </div>
           </div>
           <table className="table table-hover ">
@@ -100,7 +100,7 @@ function PublishersList() {
                   <td>{publisher.headquarter}</td>
                   <td>
                     <div>
-                      {localStorage.getItem("isAdmin") ? (
+                      {/* {localStorage.getItem("isAdmin") ? ( */}
                         <div>
                           <Link
                             className="btn btn-outline-dark mx-2"
@@ -109,7 +109,7 @@ function PublishersList() {
                             Update
                           </Link>
                         </div>
-                      ) : null}
+                      {/* ) : null} */}
                     </div>
                   </td>
                 </tr>
