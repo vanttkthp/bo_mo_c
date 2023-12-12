@@ -9,6 +9,7 @@ import Offcanvas from "react-bootstrap/Offcanvas";
 import {  signOut } from "firebase/auth";
 import {auth} from './firebase';
 import { useNavigate } from 'react-router-dom';
+import Cart from "../user/Cart/Cart";
 
 function Header() {
   const [show, setShow] = useState(false);
@@ -44,7 +45,7 @@ function Header() {
               <Offcanvas.Title>Cart</Offcanvas.Title>
             </Offcanvas.Header>
             <Offcanvas.Body>
-              
+              <Cart />
             </Offcanvas.Body>
           </Offcanvas>
           <NavDropdown title="Management" id="collapsible-nav-dropdown">
@@ -63,7 +64,7 @@ function Header() {
             <NavDropdown.Item href="/user/profile/:id">
               Profile
             </NavDropdown.Item>
-            <NavDropdown.Item href="#action/3.2">Your Orders</NavDropdown.Item>
+            <NavDropdown.Item as={Link} to={`/user/orderslist`}>Your Orders</NavDropdown.Item>
             <NavDropdown.Item onClick={handleLogout}>Logout</NavDropdown.Item>
           </NavDropdown>
           {/* <Nav.Link href="/">Your profile</Nav.Link> */}

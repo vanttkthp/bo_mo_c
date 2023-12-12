@@ -1,6 +1,6 @@
 import React from "react";
 
-import BookShopList from "./components/Pages/BookShopList.jsx";
+import BookShopList from "./components/Pages/BookPages/BookShopList.jsx";
 import Header from "./components/Layout/Header.jsx";
 import { getAuth } from "firebase/auth";
 
@@ -9,13 +9,13 @@ import { BrowserRouter } from "react-router-dom";
 
 import AddBook from "./components/admin/Book/book/AddBook.jsx";
 
-import Login from "./components/Pages/Login.jsx";
-import Signup from "./components/Pages/Signup.jsx";
-import BookDetails from "./components/Pages/BookDetails.jsx";
+import Login from "./components/Pages/Login/Login.jsx";
+import Signup from "./components/Pages/Login/Signup.jsx";
+import BookDetails from "./components/Pages/BookPages/BookDetails.jsx";
 
-import Cart from "./components/user/Cart.jsx";
-import AccessDenied from "./components/Pages/AccessDenied.jsx";
-import Order from "./components/user/Order.jsx";
+import Cart from "./components/user/Cart/Cart.jsx";
+import AccessDenied from "./components/Pages/Exception/AccessDenied.jsx";
+import Order from "./components/user/Order/Order.jsx";
 import Profile from "./components/user/Profile/Profile.jsx";
 import Bills from "./components/user/Bills.jsx";
 
@@ -50,7 +50,9 @@ import MobilesList from "./components/admin/Mobile/controller/MobilesList.jsx";
 import ProducersList from "./components/admin/Mobile/producer/ProducersList.jsx";
 import AddProducer from "./components/admin/Mobile/producer/AddProducer.jsx";
 import UpdateProducer from "./components/admin/Mobile/producer/UpdateProducer.jsx";
-import Home from "./components/Pages/Home.jsx";
+import Home from "./components/Pages/HomePage/Home.jsx";
+import OrdersList from "./components/user/Order/OrdersList.jsx";
+import MobileDetails from "./components/Pages/MobilePages/MobileDeitails.jsx";
 
 // function App() {
 //   const auth = getAuth();
@@ -177,6 +179,7 @@ function App() {
       <Route path="/" element={<Home />} />
           
             <Route path="/book/:id" element={<BookDetails />} />
+            <Route path="/mobile/:id" element={<MobileDetails />} />
             <Route path="/books/add" element={<AddBook />} />
             <Route path="/books/update/:id" element={<UpdateBook />} />
             <Route path="/books" element={<BooksList />} />
@@ -214,6 +217,11 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/noaccess" element={<AccessDenied />} />
+            <Route path="/cart" element={<Cart />} />
+            <Route path="/user/order/:id" element={<Order />} />
+
+
+            <Route path="user/orderslist" element={<OrdersList />} />
           
       
         </Routes>

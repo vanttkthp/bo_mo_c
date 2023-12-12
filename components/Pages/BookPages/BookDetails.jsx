@@ -29,34 +29,28 @@ function BookDetails() {
     loadReviews();
   }, []);
   const [order, setOrder] = useState({
-    bookTitle: "",
-    bookAuthor: "",
-    bookCategory: "",
-    bookPages: "",
+    userId: 2,
+    clothesId: "",
     bookId: "",
-    userName: "",
+    mobileId: "",
     quantity: "",
-    orderStatus: "",
-    orderQuantity: "",
-    userEmail: "",
   });
 
   function submitOrder() {
     const orderData = {
       ...order,
-      bookTitle: book.title,
-      bookAuthor: book.author,
-      bookCategory: book.category,
-      bookPages: book.pages,
-      bookId: book.id,
-      userName: userName,
-      orderQuantity: quantity,
-      userEmail: userEmail,
+      userId: 2,
+      bookId: id,
+      quantity: quantity,
+      mobileId: null,
+      clothesId: null,
+
     };
     axios
-      .post("http://localhost:8080/order", orderData)
+      .post("http://localhost:8080/cart/add-to-cart", orderData)
       .then(() => {
         setOrderSuccess(true);
+        console.log(order);
 
         setTimeout(() => {
           setOrderSuccess(false);
@@ -203,7 +197,7 @@ function BookDetails() {
               <p>
                 <strong>Sold Quantity: {book.soldQuantity}</strong>
               </p>
-              {localStorage.getItem("isUser") ? (
+              {/* {localStorage.getItem("isUser") ? ( */}
                 <>
                   <div className="d-flex align-items-center">
                     <input
@@ -227,13 +221,13 @@ function BookDetails() {
                     </div>
                   </div>
                 </>
-              ) : null}
+              {/* ) : null} */}
             </div>
           </div>
         </div>
       </div>
       <div>
-        {localStorage.getItem("isUser") || localStorage.getItem("isAdmin") ? (
+        {/* {localStorage.getItem("isUser") || localStorage.getItem("isAdmin") ? ( */}
           <div>
             <div className="form-group">
               <label htmlFor="review" className="h4">
@@ -262,9 +256,9 @@ function BookDetails() {
             </button>
             <hr />
           </div>
-        ) : (
+        {/* ) : (
           <h4 className="text-center">Login to review</h4>
-        )}
+        )} */}
       </div>
       <div>
         <h4>Comments</h4>

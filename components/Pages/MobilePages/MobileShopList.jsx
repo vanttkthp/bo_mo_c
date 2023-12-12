@@ -14,7 +14,7 @@ function MobileShopList() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/mobiles/search?keyword=${searchKeyword}&page=${currentPage}&size=2&sortString=id`
+          `http://localhost:8080/mobiles/search?keyword=${searchKeyword}&page=${currentPage}&size=4&sortString=id`
         );
 
         if (response.data && Array.isArray(response.data.listMobiles)) {
