@@ -53,6 +53,7 @@ import UpdateProducer from "./components/admin/Mobile/producer/UpdateProducer.js
 import Home from "./components/Pages/HomePage/Home.jsx";
 import OrdersList from "./components/user/Order/OrdersList.jsx";
 import MobileDetails from "./components/Pages/MobilePages/MobileDeitails.jsx";
+import ClothesDetails from "./components/Pages/ClothesPages/ClothesDetails.jsx";
 
 // function App() {
 //   const auth = getAuth();
@@ -222,7 +223,7 @@ function App() {
 
 
             <Route path="user/orderslist" element={<OrdersList />} />
-          
+            <Route path="clothes/:id" element={<ClothesDetails />} />
       
         </Routes>
       </div>

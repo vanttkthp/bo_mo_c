@@ -436,7 +436,7 @@ function Order() {
       <div className="row mt-3">
         <div className="col-md-12 d-flex">
           <Link
-            // to={`/user/bills`}
+            to={`/`}
             onClick={handleConfirm}
             type="submit"
             className="btn btn-outline-dark shadow mb-5"
