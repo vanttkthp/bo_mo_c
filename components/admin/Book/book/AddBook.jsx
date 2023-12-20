@@ -5,10 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
 function AddBook() {
   let navigate = useNavigate();
-
   const [book, setBook] = useState({
     title: "",
     authorId: "",
@@ -33,11 +31,11 @@ function AddBook() {
     appId: "1:998135104592:web:074395b35dfa92d862fd55",
     measurementId: "G-J3BL1XT5GG",
   };
-
+  const app = initializeApp(firebaseConfig);
   const [selectedImage, setSelectedImage] = useState(null);
 
   // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
+
   const analytics = getAnalytics(app);
   const storage = getStorage(app);
   useEffect(() => {
@@ -68,18 +66,14 @@ function AddBook() {
           ...book,
           image: downloadURL,
         };
-
         await axios.post("http://localhost:8080/books/add", bookData);
-
         navigate("/books");
       } else {
         const bookData = {
           ...book,
           image: "",
         };
-
         await axios.post("http://localhost:8080/books/add", bookData);
-
         navigate("/books");
       }
     } catch (error) {

@@ -160,7 +160,8 @@ function MobilesList() {
                     />
                   </td>
 
-                  <td style={{ verticalAlign: "middle" }}>{mobile.price}</td>
+                  <td style={{ verticalAlign: "middle", width: "10px" }}>{mobile.price}</td>
+
                   <td style={{ verticalAlign: "middle" }}>
                     <div>
       

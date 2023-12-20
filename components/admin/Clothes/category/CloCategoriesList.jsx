@@ -69,14 +69,14 @@ function CloCategoriesList() {
               />
             </div>
             <div className="col-md-6 mb-3">
-              {localStorage.getItem("isAdmin") ? (
+             
                 <Link
                   to="/clocategory/add"
                   className="btn btn-outline-dark btn-white btn-block"
                 >
                   ADD NEW
                 </Link>
-              ) : null}
+            
             </div>
           </div>
           <table className="table table-hover">

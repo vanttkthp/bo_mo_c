@@ -72,14 +72,14 @@ function BrandsList() {
             {/* You can modify the condition to display the Add New button based on user role */}
             <div className="col-md-6 mb-3">
               {/* Assuming you have a condition to check user role */}
-              {localStorage.getItem("isAdmin") ? (
+        
                 <Link
                   to="/brand/add"
                   className="btn btn-outline-dark btn-white btn-block"
                 >
                   ADD NEW
                 </Link>
-              ) : null}
+          
             </div>
           </div>
           <table className="table table-hover">
@@ -99,7 +99,7 @@ function BrandsList() {
                   <td>{brand.headquarter}</td>
                   <td>
                     <div>
-                      {localStorage.getItem("isAdmin") ? (
+                 
                         <div>
                           <Link
                             className="btn btn-outline-dark mx-2"
@@ -108,7 +108,7 @@ function BrandsList() {
                             Update
                           </Link>
                         </div>
-                      ) : null}
+                  
                     </div>
                   </td>
                 </tr>

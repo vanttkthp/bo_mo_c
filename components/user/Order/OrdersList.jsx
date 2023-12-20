@@ -9,7 +9,9 @@ function OrdersList() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/order?userId=${userId}`);
+        const response = await axios.get(
+          `http://localhost:8080/order?userId=${userId}`
+        );
 
         if (Array.isArray(response.data)) {
           setOrders(response.data);
@@ -23,6 +25,13 @@ function OrdersList() {
 
     fetchData();
   }, [userId]);
+  const getStatus = (status) => {
+    if (status === 1) {
+      return "da thanh toan";
+    } else if (status === 0) {
+      return "chua thanh toan"; 
+    } 
+  };
 
   return (
     <div className="container card shadow border mb-5">
@@ -38,7 +47,7 @@ function OrdersList() {
                 <th scope="col">Payment</th>
                 <th scope="col">Total Price</th>
                 <th scope="col">Status</th>
-                
+
                 <th></th>
               </tr>
             </thead>
@@ -50,7 +59,7 @@ function OrdersList() {
                   <td>{order.shipmentType}</td>
                   <td>{order.paymentType}</td>
                   <td>{order.orderTotalPrice}</td>
-                  <td>{order.status}</td>
+                  <td>{getStatus(order.status)}</td>
                   <td>
                     <div>
                       <Link

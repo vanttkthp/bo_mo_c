@@ -15,13 +15,14 @@ function VouchersList() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/voucher/search?keyword=${searchKeyword}&page=${currentPage}&size=2&sortString=id`
+          `http://localhost:8080/voucher/getAll`
         );
 
-        if (response.data && Array.isArray(response.data.listVouchers)) {
-          setVouchers(response.data.listVouchers);
+        if (response.data && Array.isArray(response.data)) {
+          setVouchers(response.data);
           setTotalPages(response.data.totalPages);
           setTotalVouchers(response.data.totalItems);
+          console.log(response.data);
         } else {
           console.error("Invalid data format received.");
         }
@@ -77,14 +78,14 @@ function VouchersList() {
               />
             </div>
             <div className="col-md-6 mb-3">
-              {localStorage.getItem("isAdmin") ? (
+              
                 <Link
                   to="/vouchers/add"
                   className="btn btn-outline-dark btn-white btn-block"
                 >
                   ADD NEW
                 </Link>
-              ) : null}
+         
             </div>
           </div>
           <table className="table table-hover ">
@@ -117,7 +118,7 @@ function VouchersList() {
                   
                   <td style={{ verticalAlign: "middle" }}>
                     <div>
-                      {localStorage.getItem("isAdmin") ? (
+             
                         <div>
                           <Link
                             className="btn btn-outline-dark mx-2"
@@ -126,7 +127,7 @@ function VouchersList() {
                             Update
                           </Link>
                         </div>
-                      ) : null}
+                
                     </div>
                   </td>
                 </tr>
